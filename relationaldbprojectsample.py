@@ -8,6 +8,7 @@ def menu():
   print("(4) Update record(s)")
   print("(5) Delete record(s)")
   print("(6) Courses not more than $x")
+  print("(7) Show hand")
   print("(0) Quit")
 
 def list_tables():
@@ -82,6 +83,26 @@ def courses_lte_x():
     print(record)
   print(len(records))
 
+def show_hand():
+  query = '''
+  SELECT Member.FirstName || ' ' || Member.LastName AS MName, 
+  Course.Description, 
+  Instructor.FirstName || ' ' || Instructor.LastName AS IName
+  FROM Certificate, Course, Member, Instructor
+  WHERE Certificate.CourseCode = Course.CourseCode AND
+  Certificate.MemberID = Member.MemberId AND
+  Certificate.InstructorID = Instructor.InstructorId;'''
+  cursor.execute(query)
+  records = cursor.fetchall()
+  # column names
+  for head in cursor.description:
+    print(head[0], end=' ')
+  print()
+  # record values
+  for record in records:
+    print(record)
+  print(len(records))
+
 # main
 # create database connection
 connection = sqlite3.connect("sports_club.db")
@@ -105,8 +126,10 @@ while option != '0':
     delete_record()
   elif option == '6':
     courses_lte_x()
+  elif option == '7':
+    show_hand()
   elif option != '0':
-    print("Valid options are 0 to 5")
+    print("Valid options are 0 to 6")
   else:
     print("Bye")
   print()
